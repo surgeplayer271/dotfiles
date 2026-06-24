@@ -1,0 +1,199 @@
+// ────────────────────────────────────────────────────────────
+//  Niri config — Liquid Glass setup
+//  Ported from Hyprland. Run `niri validate` after edits.
+// ────────────────────────────────────────────────────────────
+
+// ── Input ───────────────────────────────────────────────────
+
+input {
+    keyboard {
+        xkb {
+            // Niri reads your system keyboard layout from
+            // systemd-localed by default — nothing needed here
+            // unless you want to override it.
+        }
+        numlock
+    }
+
+    touchpad {
+        tap
+        // natural-scroll
+        accel-speed 0.2
+        // Disable touchpad while typing (good for ThinkPads)
+        // dwt
+    }
+
+    // Window under cursor gets focus without needing to click.
+    focus-follows-mouse
+}
+
+// ── Output ──────────────────────────────────────────────────
+
+output "eDP-1" {
+    // Niri auto-detects resolution and refresh rate.
+    // Uncomment to force a specific mode:
+    // mode "1920x1080@60.000"
+    scale 1.0
+    position x=0 y=0
+}
+
+// ── Layout ──────────────────────────────────────────────────
+
+layout {
+    gaps 10
+
+    // Focus ring — matches the glass accent colour.
+    focus-ring {
+        width 2
+        active-color "#7ec8ff"
+        inactive-color "#2c3b5c"
+    }
+
+    // No separate border box — focus ring is enough.
+    border {
+        off
+    }
+
+    // Drop shadow on windows.
+    shadow {
+        on
+        softness 10
+        spread 2
+        color "#00000077"
+    }
+
+    // Default column width — let niri pick automatically.
+    default-column-width { proportion 1.0; }
+}
+
+// ── Blur ────────────────────────────────────────────────────
+// Global blur applied to all transparent surfaces including
+// wofi and swayosd. Niri doesn't support per-layer blur rules
+// yet — this covers everything.
+
+blur {
+    passes 1
+}
+
+// ── Startup ─────────────────────────────────────────────────
+
+// Quickshell bar — change "classic" to your config folder name.
+// spawn-at-startup "qs" "-c" "Glass"
+spawn-at-startup "qs" "-c" "noctalia-shell"
+spawn-at-startup "Xwayland" ":0"
+
+// Wallpaper via awww.
+spawn-at-startup "awww-daemon"
+spawn-at-startup "awww" "img" "/home/kana/Pictures/Wallpapers/WINDOWS.png" "--transition-type" "fade" "--transition-duration" "1"
+
+// swayosd OSD daemon.
+spawn-at-startup "swayosd-server" "-s" "/home/kana/.config/swayosd/style.css"
+
+// XDG portals (screen sharing, file picker, etc.)
+spawn-at-startup "systemctl" "--user" "start" "xdg-desktop-portal-gnome"
+
+// ── Keybinds ────────────────────────────────────────────────
+
+binds {
+    // ── Apps ──
+    Super+Q { spawn "kitty"; }
+    Super+A      { spawn "wofi" "--show" "drun"; }
+    Super+W      { spawn "sh" "-c" "~/.config/wofi/scripts/systemmenu.sh"; }
+    Super+Escape { spawn "sh" "-c" "~/.config/wofi/scripts/powermenu.sh"; }
+
+    // ── Focus — move between columns and windows ──
+    Super+H     { focus-column-left; }
+    Super+L     { focus-column-right; }
+    Super+J     { focus-window-down; }
+    Super+K     { focus-window-up; }
+
+    Super+Left  { focus-column-left; }
+    Super+Right { focus-column-right; }
+    Super+Down  { focus-workspace-down; }
+    Super+Up    { focus-workspace-up; }
+
+    // ── Focus — move between workspaces ──
+    Super+Ctrl+J { focus-workspace-down; }
+    Super+Ctrl+K { focus-workspace-up; }
+
+    // ── Move windows ──
+    Super+Shift+H { move-column-left; }
+    Super+Shift+L { move-column-right; }
+    Super+Shift+J { move-window-down; }
+    Super+Shift+K { move-window-up; }
+
+    Super+Shift+Left  { move-column-left; }
+    Super+Shift+Right { move-column-right; }
+    Super+Shift+Down  { move-window-down; }
+    Super+Shift+Up    { move-window-up; }
+
+    // Move columns to other workspaces
+    Super+Ctrl+Shift+J { move-column-to-workspace-down; }
+    Super+Ctrl+Shift+K { move-column-to-workspace-up; }
+
+    // ── Floating / tiling toggle ──
+    Super+V       { toggle-window-floating; }
+    Super+Shift+V { switch-focus-between-floating-and-tiling; }
+
+    // ── Window sizing ──
+    Super+Minus       { set-column-width "-10%"; }
+    Super+Equal       { set-column-width "+10%"; }
+    Super+Shift+Minus { set-window-height "-10%"; }
+    Super+Shift+Equal { set-window-height "+10%"; }
+    Super+F           { maximize-column; }
+    Super+Shift+F     { fullscreen-window; }
+
+    // ── Overview (bird's eye of all open windows) ──
+    Super+O { toggle-overview; }
+
+    // ── Close / quit ──
+    Super+C       { close-window; }
+    Super+Shift+C { quit; }
+
+    // ── Consume/expel windows into columns ──
+    // Pull the window to the left into your current column
+    Super+BracketLeft  { consume-window-into-column; }
+    // Expel the focused window out of the current column
+    Super+BracketRight { expel-window-from-column; }
+
+    // ── Scroll the canvas with mouse wheel ──
+    Super+Ctrl+WheelScrollDown                    { focus-column-right; }
+    Super+Ctrl+WheelScrollUp                     { focus-column-left; }
+    Super+Shift+Ctrl+WheelScrollDown               { move-column-right; }
+    Super+Shift+Ctrl+WheelScrollUp                { move-column-left; }
+    Super+WheelScrollDown cooldown-ms=150     { focus-workspace-down; }
+    Super+WheelScrollUp   cooldown-ms=150     { focus-workspace-up; }
+
+    // ── Volume (swayosd) ──
+    XF86AudioRaiseVolume  allow-when-locked=true { spawn "swayosd-client" "--output-volume" "raise"; }
+    XF86AudioLowerVolume  allow-when-locked=true { spawn "swayosd-client" "--output-volume" "lower"; }
+    XF86AudioMute         allow-when-locked=true { spawn "swayosd-client" "--output-volume" "mute-toggle"; }
+
+    // ── Brightness (swayosd) ──
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "swayosd-client" "--brightness" "raise"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "swayosd-client" "--brightness" "lower"; }
+
+    // ── Screenshots (requires: sudo pacman -S grim slurp wl-clipboard) ──
+    Super+Shift+S { screenshot; }
+    Print         { screenshot-screen; }
+}
+
+// ── Window rules ────────────────────────────────────────────
+
+prefer-no-csd
+
+// Open wofi floating (it always should be, but explicit is safer).
+window-rule {
+    match app-id="wofi"
+    open-floating true
+}
+
+// ── Animations ──────────────────────────────────────────────
+
+animations {
+    // Lower = faster. 1.0 is default.
+    slowdown 0.7
+}
+
+include "./noctalia.kdl"
+

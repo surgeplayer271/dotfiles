@@ -1,0 +1,216 @@
+// ────────────────────────────────────────────────────────────
+//  Niri config — Liquid Glass setup
+//  Ported from Hyprland. All existing tools carry over:
+//  kitty, wofi, swayosd, awww, Quickshell, your scripts.
+//  Run `niri validate` after edits to check syntax.
+// ────────────────────────────────────────────────────────────
+
+// ── Input ───────────────────────────────────────────────────
+
+input {
+    keyboard {
+        xkb {
+            // Niri reads your system keyboard layout from
+            // systemd-localed by default — nothing to set here
+            // unless you want to override it.
+        }
+        numlock
+    }
+
+    touchpad {
+        tap
+        natural-scroll
+        accel-speed 0.2
+        accel-profile "adaptive"
+        // Disable while typing (good for ThinkPad trackpads)
+        dwt
+    }
+
+    // Focus follows mouse — window under cursor gets focus
+    // without needing to click. Remove if you don't want this.
+    focus-follows-mouse
+}
+
+// ── Output (display) ────────────────────────────────────────
+
+output "eDP-1" {
+    // Niri will auto-detect your resolution and refresh rate.
+    // Uncomment and adjust if you want to force a specific mode:
+    // mode "1920x1080@60.000"
+
+    // ThinkPad E495 has a somewhat small screen — 1.0 keeps
+    // everything at native pixel size. Try 1.25 if text feels
+    // too small for your liking.
+    scale 1.0
+
+    position x=0 y=0
+}
+
+// ── Layout ──────────────────────────────────────────────────
+
+layout {
+    // Gap between windows and screen edges, in logical pixels.
+    gaps 12
+
+    // Windows open floating by default — tile them with Super+V
+    // whenever you want them in a column alongside something else.
+    default-floating-position relative-to="screen" x=0 y=0
+
+    // Border on focused windows — matches the glass accent colour.
+    focus-ring {
+        width 2
+        active-color "#7ec8ff"
+        inactive-color "#2c3b5c"
+    }
+
+    // No extra border box (focus-ring is enough).
+    border {
+        off
+    }
+
+    // Rounded corners on all windows.
+    shadow {
+        on
+        softness 20
+        spread 2
+        offset-x 0
+        offset-y 4
+        color "#00000055"
+    }
+}
+
+// ── Blur ────────────────────────────────────────────────────
+// Applied to layer-shell surfaces (wofi, swayosd, Quickshell bar)
+// and windows automatically. Matches Hyprland's blur setup.
+
+blur {
+    passes 1
+    radius 4
+}
+
+layer-rule {
+    match namespace="wofi"
+    blur {
+        on
+    }
+}
+
+layer-rule {
+    match namespace="swayosd"
+    blur {
+        on
+    }
+}
+
+// ── Startup ─────────────────────────────────────────────────
+
+// Quickshell bar — uses -c to pick your named config.
+// Change "classic" to whatever folder name you migrated to.
+spawn-at-startup "qs" "-c" "classic"
+
+// Wallpaper via awww (same as Hyprland setup).
+spawn-at-startup "awww-daemon"
+spawn-at-startup "awww" "img" "/home/kana/Pictures/Wallpapers/WINDOWS.png" "--transition-type" "fade" "--transition-duration" "1"
+
+// swayosd daemon for volume/brightness OSD.
+spawn-at-startup "swayosd-server" "-s" "/home/kana/.config/swayosd/style.css"
+
+// XDG portals (screen sharing, file picker, etc.)
+spawn-at-startup "systemctl" "--user" "start" "xdg-desktop-portal-gnome"
+
+// ── Keybinds ────────────────────────────────────────────────
+// Note: niri has NO built-in defaults — every bind you want
+// must be listed here. `niri validate` will warn on typos.
+
+binds {
+    // ── Apps ──
+    Super+Return { spawn "kitty"; }
+    Super+A       { spawn "wofi" "--show" "drun"; }
+    Super+X       { spawn "/home/kana/.config/wofi/scripts/systemmenu.sh"; }
+
+    // ── Power / session ──
+    Super+Escape  { spawn "/home/kana/.config/wofi/scripts/powermenu.sh"; }
+
+    // ── Navigation — scroll through the canvas ──
+    Super+H       { focus-column-left; }
+    Super+L       { focus-column-right; }
+    Super+J       { focus-window-or-workspace-down; }
+    Super+K       { focus-window-or-workspace-up; }
+
+    // Arrow-key equivalents (same actions, your choice which to use)
+    Super+Left    { focus-column-left; }
+    Super+Right   { focus-column-right; }
+    Super+Down    { focus-window-or-workspace-down; }
+    Super+Up      { focus-window-or-workspace-up; }
+
+    // ── Move windows ──
+    Super+Shift+H     { move-column-left; }
+    Super+Shift+L     { move-column-right; }
+    Super+Shift+J     { move-window-down-or-to-workspace-below; }
+    Super+Shift+K     { move-window-up-or-to-workspace-above; }
+
+    Super+Shift+Left  { move-column-left; }
+    Super+Shift+Right { move-column-right; }
+    Super+Shift+Down  { move-window-down-or-to-workspace-below; }
+    Super+Shift+Up    { move-window-up-or-to-workspace-above; }
+
+    // ── Floating / tiling toggle ──
+    // Super+V puts the focused window into/out of a tiled column.
+    // This is the main way to "tile when you want" on an otherwise
+    // floating-first setup.
+    Super+V           { toggle-window-floating; }
+    Super+Shift+V     { switch-focus-between-floating-and-tiling; }
+
+    // ── Window sizing (when tiled) ──
+    Super+Minus       { set-column-width "-10%"; }
+    Super+Equal       { set-column-width "+10%"; }
+    Super+Shift+Minus { set-window-height "-10%"; }
+    Super+Shift+Equal { set-window-height "+10%"; }
+    Super+F           { maximize-column; }
+    Super+Shift+F     { fullscreen-window; }
+
+    // ── Overview (bird's eye of all windows) ──
+    Super+O           { toggle-overview; }
+
+    // ── Close window ──
+    Super+Q           { close-window; }
+    Super+Shift+Q     { quit; }
+
+    // ── Scroll the canvas ──
+    // Scroll left/right through open windows with comma/period.
+    // Very natural on a small ThinkPad screen.
+    Super+Comma         { scroll-left; }
+    Super+Period        { scroll-right; }
+    Super+Shift+Comma   { scroll-left-column; }
+    Super+Shift+Period  { scroll-right-column; }
+
+    // ── Volume (swayosd) ──
+    XF86AudioRaiseVolume  allow-when-locked=true { spawn "swayosd-client" "--output-volume" "raise"; }
+    XF86AudioLowerVolume  allow-when-locked=true { spawn "swayosd-client" "--output-volume" "lower"; }
+    XF86AudioMute         allow-when-locked=true { spawn "swayosd-client" "--output-volume" "mute-toggle"; }
+
+    // ── Brightness (swayosd) ──
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "swayosd-client" "--brightness" "raise"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "swayosd-client" "--brightness" "lower"; }
+
+    // ── Screenshot ──
+    // (requires grim + slurp — install with: sudo pacman -S grim slurp)
+    Super+Shift+S { spawn "sh" "-c" "grim -g \"$(slurp)\" - | wl-copy"; }
+    Print         { spawn "sh" "-c" "grim - | wl-copy"; }
+}
+
+// ── Window rules ────────────────────────────────────────────
+
+// Open wofi popups floating (they always should be, but this
+// makes it explicit so tiling mode doesn't accidentally grab them).
+window-rule {
+    match app-id="wofi"
+    open-floating true
+}
+
+// ── Animations ──────────────────────────────────────────────
+
+animations {
+    // Overall speed multiplier — 1.0 is default, lower = faster.
+    slowdown 0.7
+}
