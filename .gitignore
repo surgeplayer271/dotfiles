@@ -1,0 +1,5 @@
+# secrets / sensitive
+**/credentials
+**/secrets
+**/*.key
+**/*.pem
