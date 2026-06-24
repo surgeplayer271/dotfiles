@@ -333,12 +333,12 @@
         "backgroundOpacity": 1,
         "colorizeIcons": false,
         "deadOpacity": 0.6,
-        "displayMode": "auto_hide",
+        "displayMode": "always_visible",
         "dockType": "floating",
         "enabled": true,
-        "floatingRatio": 1,
-        "groupApps": false,
-        "groupClickAction": "cycle",
+        "floatingRatio": 0,
+        "groupApps": true,
+        "groupClickAction": "list",
         "groupContextMenuMode": "extended",
         "groupIndicatorStyle": "dots",
         "inactiveIndicators": false,
@@ -355,11 +355,11 @@
         "pinnedApps": [
         ],
         "pinnedStatic": false,
-        "position": "bottom",
+        "position": "right",
         "showDockIndicator": false,
-        "showLauncherIcon": false,
+        "showLauncherIcon": true,
         "sitOnFrame": false,
-        "size": 1
+        "size": 0.5
     },
     "general": {
         "allowPanelsOnScreenWithoutBar": true,
@@ -727,6 +727,20 @@
                     "#fd4663"
                 ],
                 "path": "/home/kana/Pictures/Wallpapers/wp15117484-ultrakill-desktop-wallpapers.png",
+                "useWallpaperColors": true
+            },
+            {
+                "appearance": "dark",
+                "colorScheme": "Rosey AMOLED",
+                "darkMode": true,
+                "generationMethod": "vibrant",
+                "paletteColors": [
+                    "#4e94fd",
+                    "#4b37fd",
+                    "#ae37fd",
+                    "#fd4663"
+                ],
+                "path": "/home/kana/Pictures/Wallpapers/WRATH.png",
                 "useWallpaperColors": true
             }
         ],

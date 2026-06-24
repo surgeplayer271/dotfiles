@@ -61,9 +61,14 @@ layout {
         spread 2
         color "#00000077"
     }
-
+    
     // Default column width — let niri pick automatically.
     default-column-width { proportion 1.0; }
+}
+
+overview {
+    // Set a solid color behind workspaces in overview mode
+    backdrop-color "#000000"
 }
 
 // ── Blur ────────────────────────────────────────────────────
@@ -192,7 +197,7 @@ window-rule {
 
 animations {
     // Lower = faster. 1.0 is default.
-    slowdown 0.7
+    slowdown 0.8
 }
 
 include "./noctalia.kdl"
