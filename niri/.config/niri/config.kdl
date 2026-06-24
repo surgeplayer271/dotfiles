@@ -97,15 +97,15 @@ spawn-at-startup "systemctl" "--user" "start" "xdg-desktop-portal-gnome"
 binds {
     // ── Apps ──
     Super+Q { spawn "kitty"; }
-    Super+A      { spawn "wofi" "--show" "drun"; }
-    Super+W      { spawn "sh" "-c" "~/.config/wofi/scripts/systemmenu.sh"; }
-    Super+Escape { spawn "sh" "-c" "~/.config/wofi/scripts/powermenu.sh"; }
+    Super+A      { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    Super+Escape      { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    Super+L { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
 
     // ── Focus — move between columns and windows ──
-    Super+H     { focus-column-left; }
-    Super+L     { focus-column-right; }
-    Super+J     { focus-window-down; }
-    Super+K     { focus-window-up; }
+    //Super+H     { focus-column-left; }
+    //Super+L     { focus-column-right; }
+    //Super+J     { focus-window-down; }
+    //Super+K     { focus-window-up; }
 
     Super+Left  { focus-column-left; }
     Super+Right { focus-column-right; }
